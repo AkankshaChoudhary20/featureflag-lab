@@ -18,7 +18,7 @@ export class Store {
     }
     return {...result,exposure_id:id};
   }
-  convert(id){const event=this.state.exposures[id];if(!event)throw Error('Exposure not found. Evaluate the flag first.');if(!event.converted){event.converted=true;this.persist();}return {recorded:true};}
+  convert(id){const event=Object.hasOwn(this.state.exposures,id)?this.state.exposures[id]:null;if(!event)throw Error('Exposure not found. Evaluate the flag first.');if(!event.converted){event.converted=true;this.persist();}return {recorded:true};}
   summary(key,version){
     const flag=Object.hasOwn(this.state.flags,key)?this.state.flags[key]:null;if(!flag)throw Error('Flag not found.');
     version=version||flag.version;const groups=new Map();

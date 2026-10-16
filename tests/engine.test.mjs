@@ -18,3 +18,19 @@ test('targeting requires explicitly supplied attributes',()=>{
   assert.equal(evaluate(special,'42',attributes).reason,'targeting');
   assert.equal(evaluate(special,'42',{constructor:'pro'}).eligible,true);
 });
+
+
+test('prototype keys cannot be converted as exposures',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'flags-'));
+  try {
+    const path=join(dir,'state.json');
+    const store=new Store(path);
+    store.save(flag);
+    for(const id of ['constructor','__proto__','toString','hasOwnProperty']) {
+      assert.throws(()=>store.convert(id), /Exposure not found/);
+    }
+    assert.equal(Object.hasOwn(Object.prototype,'converted'),false);
+    const restored=new Store(path);
+    assert.deepEqual(restored.state.exposures,{});
+  } finally { rmSync(dir,{recursive:true,force:true}); }
+});
