@@ -20,7 +20,7 @@ export function evaluate(flag,userId,attributes={}) {
   if(!attributes||typeof attributes!=='object'||Array.isArray(attributes))throw Error('Attributes must be an object.');
   const base={key:flag.key,version:flag.version,eligible:false,variant:null};
   if(!flag.enabled)return {...base,reason:'disabled'};
-  if(Object.entries(flag.targeting).some(([k,v])=>attributes[k]!==v))return {...base,reason:'targeting'};
+  if(Object.entries(flag.targeting).some(([k,v])=>!Object.hasOwn(attributes,k)||attributes[k]!==v))return {...base,reason:'targeting'};
   if(bucket(flag.key,userId)>=flag.rollout)return {...base,reason:'rollout'};
   const pick=bucket(flag.key,userId,'variant');let cumulative=0;
   for(const v of flag.variants){cumulative+=v.weight;if(pick<cumulative)return {...base,eligible:true,variant:v.name,reason:'assigned'};}
