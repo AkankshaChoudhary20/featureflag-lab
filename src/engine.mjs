@@ -13,7 +13,7 @@ export function validateFlag(flag) {
   }
   if (Math.abs(sum-100)>0.00001) throw Error('Variant weights must sum to 100.');
   if (typeof flag.targeting !== 'object' || !flag.targeting || Array.isArray(flag.targeting) || Object.keys(flag.targeting).length>10 || Object.values(flag.targeting).some(v=>typeof v!=='string')) throw Error('Targeting must contain up to 10 exact string attribute matches.');
-  return {key:flag.key,enabled:flag.enabled,rollout:flag.rollout,targeting:flag.targeting,variants:flag.variants.map(v=>({name:v.name,weight:v.weight}))};
+  return {key:flag.key,enabled:flag.enabled,rollout:flag.rollout,targeting:{...flag.targeting},variants:flag.variants.map(v=>({name:v.name,weight:v.weight}))};
 }
 export function evaluate(flag,userId,attributes={}) {
   if(typeof userId!=='string'||!userId||userId.length>200) throw Error('User ID must be 1–200 characters.');
@@ -32,3 +32,4 @@ export function interval(converted,total){
   const margin=z*Math.sqrt(p*(1-p)/total+z*z/(4*total*total))/den;
   return {low:Math.max(0,center-margin),high:Math.min(1,center+margin)};
 }
+
