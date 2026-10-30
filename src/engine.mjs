@@ -3,7 +3,7 @@ export function bucket(key,userId,salt='rollout') {
   return createHash('sha256').update(JSON.stringify([key,userId,salt])).digest().readUInt32BE(0)/0x100000000*100;
 }
 export function validateFlag(flag) {
-  if (!flag || typeof flag !== 'object' || (!/^[a-z][a-z0-9_-]{0,63}$/.test(flag.key) || ['constructor','prototype','__proto__'].includes(flag.key))) throw Error('Key must be lowercase letters, numbers, underscores or hyphens.');
+  if (!flag || typeof flag !== 'object' || typeof flag.key !== 'string' || (!/^[a-z][a-z0-9_-]{0,63}$/.test(flag.key) || ['constructor','prototype','__proto__'].includes(flag.key))) throw Error('Key must be lowercase letters, numbers, underscores or hyphens.');
   if (typeof flag.enabled !== 'boolean' || !Number.isFinite(flag.rollout) || flag.rollout<0 || flag.rollout>100) throw Error('Provide enabled boolean and rollout from 0 to 100.');
   if (!Array.isArray(flag.variants) || flag.variants.length<2 || flag.variants.length>8) throw Error('Provide 2–8 variants.');
   const names=new Set();let sum=0;
@@ -32,4 +32,3 @@ export function interval(converted,total){
   const margin=z*Math.sqrt(p*(1-p)/total+z*z/(4*total*total))/den;
   return {low:Math.max(0,center-margin),high:Math.min(1,center+margin)};
 }
-
