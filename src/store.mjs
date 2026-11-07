@@ -5,8 +5,8 @@ import { validateFlag, evaluate, interval } from './engine.mjs';
 export class Store {
   constructor(path){this.path=path;this.state=existsSync(path)?JSON.parse(readFileSync(path,'utf8')):{flags:{},exposures:{}};}
   persist(){mkdirSync(dirname(this.path),{recursive:true});writeFileSync(this.path+'.tmp',JSON.stringify(this.state));renameSync(this.path+'.tmp',this.path);}
-  list(){return Object.values(this.state.flags);}
-  save(input){const flag=validateFlag(input);flag.version=(this.state.flags[flag.key]?.version||0)+1;this.state.flags[flag.key]=flag;this.persist();return flag;}
+  list(){return structuredClone(Object.values(this.state.flags));}
+  save(input){const flag=validateFlag(input);flag.version=(this.state.flags[flag.key]?.version||0)+1;this.state.flags[flag.key]=flag;this.persist();return structuredClone(flag);}
   assign(key,userId,attributes){
     const flag=Object.hasOwn(this.state.flags,key)?this.state.flags[key]:null;if(!flag)throw Error('Flag not found.');
     const result=evaluate(flag,userId,attributes);
