@@ -8,7 +8,7 @@ export function validateFlag(flag) {
   if (!Array.isArray(flag.variants) || flag.variants.length<2 || flag.variants.length>8) throw Error('Provide 2–8 variants.');
   const names=new Set();let sum=0;
   for (const variant of flag.variants) {
-    if (!variant || typeof variant.name !== 'string' || !variant.name || variant.name.length>64 || names.has(variant.name) || !Number.isFinite(variant.weight) || variant.weight<0) throw Error('Variants require distinct names and nonnegative weights.');
+    if (!variant || typeof variant.name !== 'string' || !variant.name.trim() || variant.name.length>64 || names.has(variant.name) || !Number.isFinite(variant.weight) || variant.weight<0) throw Error('Variants require distinct names and nonnegative weights.');
     names.add(variant.name);sum+=variant.weight;
   }
   if (Math.abs(sum-100)>0.00001) throw Error('Variant weights must sum to 100.');
